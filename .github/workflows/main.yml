@@ -2,8 +2,8 @@ name: Main Branch Workflow
 
 on:
   push:
-    tags:
-      - "*"
+    # tags:
+    #   - "*"
     branches:
       - main
       - test-multiarch-docker
@@ -93,6 +93,7 @@ jobs:
         with:
           extra_plugins: |
             @codedependant/semantic-release-docker
+            @google/semantic-release-replace-plugin
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DOCKER_REGISTRY_USER : ${{ github.actor }}
