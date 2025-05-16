@@ -1,17 +1,18 @@
 branches:
   - main
+  - test-multiarch-docker
 
 plugins:
-  - 
-    - "@semantic-release/commit-analyzer"
-    - preset: "angular"
+  # - 
+  #   - "@semantic-release/commit-analyzer"
+  #   - preset: "angular"
   - 
     - "@google/semantic-release-replace-plugin"
     - replacements:
       - files:
         - "pyproject.toml"
         from: "version = \".*\""
-        to: "version = \"${nextRelease.version}\""
+        to: "version = \"${nextRelease.gitHead}\""
         results:
           - file: "pyproject.toml"
             hasChanged: true
@@ -21,12 +22,12 @@ plugins:
   - 
     - "@codedependant/semantic-release-docker"
     -  dockerRegistry: "ghcr.io"
-       dockerImage: "squent/kuma-ingress-watcher"
-  - "@semantic-release/release-notes-generator"  
-  - 
-    - "@semantic-release/git"
-    - assets:
-      - "pyproject.toml"
-  - "@semantic-release/github"
-  - "@semantic-release/changelog"
+       dockerImage: "h3mul/kuma-ingress-watcher"
+  # - "@semantic-release/release-notes-generator"  
+  # - 
+  #   - "@semantic-release/git"
+  #   - assets:
+  #     - "pyproject.toml"
+  # - "@semantic-release/github"
+  # - "@semantic-release/changelog"
  

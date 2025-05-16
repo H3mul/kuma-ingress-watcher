@@ -6,6 +6,7 @@ on:
       - "*"
     branches:
       - main
+      - test-multiarch-docker
 
 env:
   REGISTRY: ghcr.io
@@ -35,67 +36,67 @@ jobs:
         run: |
           poetry run pytest
   
-  build_and_publish:
+  # build_and_publish:
+  #   needs: lint_and_test
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+
+  #     - name: Build and Publish Docker Image
+  #       id: push
+  #       uses: docker/build-push-action@14487ce63c7a62a4a324b0bfb37086795e31c6c1 # v6
+  #       with:
+  #         context: .
+  #         push: true
+  #         tags: ${{ steps.meta.outputs.tags }}
+  #         labels: ${{ steps.meta.outputs.labels }}
+  #         cache-from: type=gha
+  #         cache-to: type=gha,mode=max
+
+  semantic_release:
     needs: lint_and_test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2 # v3
+      # - name: Setup Docker Buildx
+      #   id: buildx
+      #   uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2 # v3
 
-      - name: Setup GHCR
-        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Setup GHCR
+      #   uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3
+      #   with:
+      #     registry: ${{ env.REGISTRY }}
+      #     username: ${{ github.actor }}
+      #     password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: |
-            type=sha,prefix=
-            type=ref,event=tag
-            type=ref,event=branch
-            type=raw,value=latest
-
-      - name: Build and Publish Docker Image
-        id: push
-        uses: docker/build-push-action@14487ce63c7a62a4a324b0bfb37086795e31c6c1 # v6
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-  # semantic_release:
-  #   needs: lint_and_test
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v4
+      # - name: Extract metadata (tags, labels) for Docker
+      #   id: meta
+      #   uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+      #   with:
+      #     images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+      #     tags: |
+      #       type=sha,prefix=
+      #       type=ref,event=tag
+      #       type=ref,event=branch
+      #       type=raw,value=latest
       
-  #     - name: Set up Node.js
-  #       uses: actions/setup-node@v4
-  #       with:
-  #         node-version: '16'
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '16'
 
-  #     - name: Semantic Release
-  #       uses: cycjimmy/semantic-release-action@v4
-  #       with:
-  #         extra_plugins: |
-  #           @semantic-release/git
-  #           @semantic-release/changelog
-  #           @codedependant/semantic-release-docker
-  #           @google/semantic-release-replace-plugin
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #         DOCKER_REGISTRY_USER : ${{ github.actor }}
-  #         DOCKER_REGISTRY_PASSWORD : ${{ secrets.GITHUB_TOKEN }}
+      - name: Semantic Release
+        uses: cycjimmy/semantic-release-action@v4
+        with:
+          extra_plugins: |
+            @semantic-release/git
+            @semantic-release/changelog
+            @codedependant/semantic-release-docker
+            @google/semantic-release-replace-plugin
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DOCKER_REGISTRY_USER : ${{ github.actor }}
+          DOCKER_REGISTRY_PASSWORD : ${{ secrets.GITHUB_TOKEN }}
