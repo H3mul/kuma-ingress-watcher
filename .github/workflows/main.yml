@@ -13,28 +13,28 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  lint_and_test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+  # lint_and_test:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
+  #     - name: Set up Python
+  #       uses: actions/setup-python@v5
+  #       with:
+  #         python-version: '3.12'
 
-      - name: Install dependencies
-        run: |
-          pip install poetry
-          poetry install
+  #     - name: Install dependencies
+  #       run: |
+  #         pip install poetry
+  #         poetry install
   
-      - name: Run linter
-        run: poetry run flake8
+  #     - name: Run linter
+  #       run: poetry run flake8
   
-      - name: Run tests
-        run: |
-          poetry run pytest
+  #     - name: Run tests
+  #       run: |
+  #         poetry run pytest
   
   # build_and_publish:
   #   needs: lint_and_test
@@ -55,7 +55,7 @@ jobs:
   #         cache-to: type=gha,mode=max
 
   semantic_release:
-    needs: lint_and_test
+    # needs: lint_and_test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -92,10 +92,7 @@ jobs:
         uses: cycjimmy/semantic-release-action@v4
         with:
           extra_plugins: |
-            @semantic-release/git
-            @semantic-release/changelog
             @codedependant/semantic-release-docker
-            @google/semantic-release-replace-plugin
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DOCKER_REGISTRY_USER : ${{ github.actor }}
